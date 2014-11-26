@@ -10,6 +10,8 @@ $items = array();
 do {
     // Iterate through list items
     foreach ($items as $key => $item) {
+        // ***Start numbering list with 1 instead of 0
+        $key++;
         // Display each item and a newline
         echo "[{$key}] {$item}\n";
     }
@@ -32,6 +34,8 @@ do {
         echo 'Enter item number to remove: ';
         // Get array key
         $key = trim(fgets(STDIN));
+        // ***Make sure remove still works after setting list to start at 1
+        $key--;
         // Remove from array
         unset($items[$key]);
     }
