@@ -1,2 +1,2 @@
 #A CLI Todo List 
-utilizes user input
+A command line application utilizing user input
