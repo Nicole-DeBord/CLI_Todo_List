@@ -1,7 +1,6 @@
 <?php
 
-// exercise 3.4., part 1 - update the code to allow uppercase and 
-// lowercase inputs from user - test add, remove, quit functionality
+// below are some alternative methods to solve exercise 3.4.
 
 // Create array to hold list of todo items
 $items = array();
@@ -22,22 +21,27 @@ do {
     // Get the input from user
     // Use trim() to remove whitespace and newlines
     $input = trim(fgets(STDIN));
+    // this is a much easier way to accept upper and lowercase items
+    $input = strtoupper($input);
 
     // Check for actionable input
-    if ($input == 'N' || $input =='n') {
+    if ($input == 'N') {
         // Ask for entry
         echo 'Enter item: ';
         // Add entry to list array
         $items[] = trim(fgets(STDIN));
-    } elseif ($input == 'R' || $input == 'r') {
+    } elseif ($input == 'R') {
         // Remove which item?
         echo 'Enter item number to remove: ';
         // Get array key
-        $key = trim(fgets(STDIN));
-        // ***Make sure remove still works after setting list to start at 1
-        $key--;
+        // see how we added -1?
+        $key = trim(fgets(STDIN)) -1;
+        //Make sure remove still works after setting list to start at 1
         // Remove from array
         unset($items[$key]);
+
+        // Here we overwrite $items with 
+        $items = array_values($items);
     }
 // Exit when input is (Q)uit
 } while ($input != 'Q' && $input != 'q');
