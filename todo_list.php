@@ -86,9 +86,20 @@ do {
     // The value of $items is assigned to $originalOrder so we can call our array values in their
     // default order later, even if $items has been resorted.
     if ($input == 'N') {
+        echo 'Add item to (B)eginning or (E)nd of list? ';
+        $arrayPosition = getInput(true);
+        
         echo 'Enter item: ';
-        $items[] = getInput();
-        $originalOrder = $items;
+        $newTodo = getInput(false);
+
+            if ($arrayPosition == 'B') {
+                array_unshift($items, $newTodo);
+            } else {
+                array_push($items, $newTodo);
+                // Below is an example of array_push shorthand
+                // $items[] = $newTodo; 
+                $originalOrder = $items;
+            }
     } elseif ($input == 'S') {
         // Calling my sort function, passing argument '$items'
         // I've set the value of $items equal to whatever sortMenu reordered it as.
@@ -96,10 +107,14 @@ do {
         // $originalOrder 
         $items = sortMenu($items, $originalOrder);
         // Remove items.
+    } elseif ($input == 'L') {
+        array_pop($items);
+    } elseif ($input == 'F') {
+        array_shift($items);
     } elseif ($input == 'R') {
         echo 'Enter item number to remove: ';
         $key = getInput();
-        // I actually have no idea why this is here. Oops.
+        // Unset removes an element from an array.
         unset($items[$key]);
     }
 // Exit when input is (Q)uit.
