@@ -1,6 +1,6 @@
 <?php
 
-// Exercise 3.5.4. - updated todo list by adding functions
+// Exercise 3.5.4. - some alternative solutions
 
 // Create array to hold list of todo items
 $items = array();
@@ -36,26 +36,31 @@ function listItems($list) {
 // We can return it with or without changing to uppercase.
 function getInput($upper = false) {
 
-    // Capture user input, trim whitespace.
-    $input = trim(fgets(STDIN));
 
-    // If we passed in true when we called the function, 
-    // change the input to uppercase.
-    if ($upper == true) {
-        // Overwrite the existing input with an uppercase version.
-        $input = strtoupper($input);
-    }
+// In the below options, I omitted '$upper == true' because it is
+// redundant - the if conditional is already checking whether or
+// or not $upper is set to true
 
-    // Return that input to main code.
-    return $input;
+// option 1:
 
-    /*
-        Remember we can call this function in two ways:
-            1.  getInput(); -- will return input as entered.
-            2.  getInput('Y') -- will return input uppercased.
-    */
+    if($upper) {
+        return strtoupper(trim(fgets(STDIN)));
+    } else {
+        return trim(fgets(STDIN));
 }
 
+// option 2:
+$input = trim(fgets(STDIN));
+return ($upper) ? strtoupper($input) : $input;
+
+
+// option 3:
+    $input = trim(fgets(STDIN));
+    if($upper) {
+        $input = strtoupper($input);
+    }
+    return $input;
+}
 
 
 // The loop!
