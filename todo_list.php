@@ -20,7 +20,7 @@ function listItems($list) {
         }
             return $returnedItem;
     } else {
-        return 'No items' . PHP_EOL;
+        return 'No items.' . PHP_EOL;
     }
 }
 
@@ -69,12 +69,40 @@ function sortMenu($array, $defaultArray) {
     return $array;
 }
 
+// This function takes a user defined file path as its parameter, opens the file, checks
+// to see if there is data contained within the file or not - if no, error message - if yes,
+// reads and trims the file data, then takes every individual line in the file and adds it
+// to an array using the explode function - the resulting array is assigned to a variable and 
+// returned by the function.
+// Note that $contentsArray is initially assigned an empty array - this way, if there is no input
+// from the file, $contentsArray has the value of an empty array and no harm or foul
+// occurs when this is merged with the existing todo list - if there IS input, it is reassigned
+// to this variable
+
+function addFromFile($userDefinedFile) {
+    $contentsArray = [];
+    if (file_exists($userDefinedFile)) {    
+        $handle = fopen($userDefinedFile, 'r');
+        if (filesize($userDefinedFile) == 0) {
+            echo 'This file is empty.' . PHP_EOL;
+        } else {
+            $contents = trim(fread($handle, filesize($userDefinedFile)));
+            $contentsArray = explode(PHP_EOL, $contents);
+        }
+        fclose($handle);
+    } else { 
+        echo 'Filepath does not exist.' . PHP_EOL;
+    }
+    return $contentsArray;
+}
+
+
 // The loop!
 do {
     // Here I call my function and my array items get listed
     echo listItems($items);
     // Show the menu options
-    echo '(N)ew item, (R)emove item, (S)ort, (Q)uit : ';
+    echo '(N)ew item, (R)emove item, (S)ort, (O)pen, (Q)uit : ';
 
     // Get the input from user
     // Use trim() to remove whitespace and newlines
@@ -104,13 +132,20 @@ do {
         // Calling my sort function, passing argument '$items'
         // I've set the value of $items equal to whatever sortMenu reordered it as.
         // When it passes back through the DO part of my loop, $items will display in their new order.
-        // $originalOrder 
         $items = sortMenu($items, $originalOrder);
-        // Remove items.
+        // Removes last item in array.
     } elseif ($input == 'L') {
         array_pop($items);
+        // Removes first item in array.
     } elseif ($input == 'F') {
         array_shift($items);
+        // Added a 
+    } elseif ($input == 'O') {
+        echo 'Enter a valid file path: ';
+        $todoFile = getInput (false); 
+        $newArray = addFromFile($todoFile);
+        $items = array_merge($items, $newArray);
+        // Removes items from the todo list.
     } elseif ($input == 'R') {
         echo 'Enter item number to remove: ';
         $key = getInput();
