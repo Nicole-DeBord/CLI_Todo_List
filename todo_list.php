@@ -1,6 +1,7 @@
 <?php
 
-// Exercise 3.6.1. - Sorting arrays and other fun
+// Exercise 3.7.1. - Added a s(A)ve option; created a function that opens, writes todo items to, 
+// and saves a file
 
 // This array will hold todo items entered by the user.
 $items = array();
@@ -18,7 +19,7 @@ function listItems($list) {
             $returnedItem .= "[{$key}] {$item} \n";
             $key++;
         }
-            return $returnedItem;
+        return $returnedItem;
     } else {
         return 'No items.' . PHP_EOL;
     }
@@ -35,11 +36,11 @@ function getInput($upper = false) {
         return strtoupper(trim(fgets(STDIN)));
     } else {
         return trim(fgets(STDIN));
-}
+    }
 
 // option 2:
-$input = trim(fgets(STDIN));
-return ($upper) ? strtoupper($input) : $input;
+    $input = trim(fgets(STDIN));
+    return ($upper) ? strtoupper($input) : $input;
 
 
 // option 3:
@@ -91,26 +92,34 @@ function addFromFile($userDefinedFile) {
         }
         fclose($handle);
     } else { 
-        echo 'Filepath does not exist.' . PHP_EOL;
+        echo 'File or path specified does not exist.' . PHP_EOL;
     }
     return $contentsArray;
+}
+
+// This function takes a user defined file, opens it in 'write' mode, implodes items from the todo list array
+// into strings separated by line breaks in the file and saves it, closes the file, returns file saved message
+
+function overwriteFile($userDefinedFile, $todoList) {
+    $handle = fopen($userDefinedFile, 'w');
+    fwrite($handle, implode(PHP_EOL, $todoList));
+    fclose($handle);
+    return "$userDefinedFile was saved successfully!";
 }
 
 
 // The loop!
 do {
-    // Here I call my function and my array items get listed
+    // Calls listItems function, array items get listed.
     echo listItems($items);
     // Show the menu options
-    echo '(N)ew item, (R)emove item, (S)ort, (O)pen, (Q)uit : ';
+    echo '(N)ew item, (R)emove item, (S)ort, (O)pen, s(A)ve, (Q)uit: ';
 
     // Get the input from user
     // Use trim() to remove whitespace and newlines
     $input = getInput(true);
 
-    // Check for actionable input.
-    // Ask for entry.
-    // User input is entered as values in array $items.
+    // Checks for actionable input, asks for entry, user input is entered as values in array $items.
     // The value of $items is assigned to $originalOrder so we can call our array values in their
     // default order later, even if $items has been resorted.
     if ($input == 'N') {
@@ -120,39 +129,58 @@ do {
         echo 'Enter item: ';
         $newTodo = getInput(false);
 
-            if ($arrayPosition == 'B') {
-                array_unshift($items, $newTodo);
-            } else {
-                array_push($items, $newTodo);
-                // Below is an example of array_push shorthand
-                // $items[] = $newTodo; 
-                $originalOrder = $items;
-            }
+        if ($arrayPosition == 'B') {
+            array_unshift($items, $newTodo);
+        } else {
+            array_push($items, $newTodo);
+            // Below is an example of array_push shorthand
+            // $items[] = $newTodo; 
+            $originalOrder = $items;
+        }
+
+    // Calls a sort function, passes current todo list, sets the value of $items equal
+    // to a resorted array - when it passes back through the DO loop, $items will display in their new order.
     } elseif ($input == 'S') {
-        // Calling my sort function, passing argument '$items'
-        // I've set the value of $items equal to whatever sortMenu reordered it as.
-        // When it passes back through the DO part of my loop, $items will display in their new order.
         $items = sortMenu($items, $originalOrder);
-        // Removes last item in array.
+
+    // Removes last item in array.
     } elseif ($input == 'L') {
         array_pop($items);
-        // Removes first item in array.
+
+    // Removes first item in array.
     } elseif ($input == 'F') {
         array_shift($items);
-        // Added a 
+    
+    // Opens a file, reads its contents, merges with existing array using function.
     } elseif ($input == 'O') {
-        echo 'Enter a valid file path: ';
-        $todoFile = getInput (false); 
-        $newArray = addFromFile($todoFile);
+        echo 'Enter a valid path or file name: ';
+        $readFile = getInput(false); 
+        $newArray = addFromFile($readFile);
         $items = array_merge($items, $newArray);
-        // Removes items from the todo list.
+
+    // Opens, writes todo list to, and saves a file using function.
+    } elseif ($input == 'A') {
+        echo 'Enter desired path or file name: ';
+        $openFile = getInput(false);
+        if(file_exists($openFile)) {
+            echo "File '{$openFile}' already exists. Are you sure you want to overwrite the existing file? (Y) or (N): ";
+            $fileOverwrite = getInput(true);
+            if ($fileOverwrite == 'Y') {
+                echo overwriteFile($openFile, $items) . PHP_EOL;
+            } 
+        } else {
+            echo overwriteFile($openFile, $items) . PHP_EOL;
+        }
+
+    // Removes item from list.
     } elseif ($input == 'R') {
         echo 'Enter item number to remove: ';
         $key = getInput();
         // Unset removes an element from an array.
         unset($items[$key]);
     }
-// Exit when input is (Q)uit.
+
+// Continue until input is (Q)uit.
 } while ($input != 'Q');
 
 // Say Goodbye!
